@@ -37,18 +37,20 @@ class BrakeBanner {
 	show() {
 		// 创建按钮容器
 		const actionContainer = this.createdBtnContainer()
-		actionContainer.x = actionContainer.y = 300
+		
 		actionContainer.interactive = true
 		actionContainer.buttonMode = true
 		// 创建车架容器
 		const brakeContainer = this.createBrakeContainer()
+		actionContainer.x = window.innerWidth - brakeContainer.width + 200
+		actionContainer.y = window.innerHeight - brakeContainer.height + 200
 		this.app.stage.addChild(brakeContainer)
 		this.app.stage.addChild(actionContainer)
 		// 创建粒子数据
 		this.createParticles()
 		const loop = this.getParticleLoop()
 		this.startLoop(loop)
-		// 设置时间和交互
+		// 设置事件和交互
 		this.setEvent(brakeContainer, actionContainer, loop)
 	}
 
@@ -63,15 +65,17 @@ class BrakeBanner {
 		resize()
 		actionContainer.on('mousedown', () => {
 			const rotation = this.btns[BRAKE_LEVER].rotation = Math.PI / 180 * -30
-			gsap.to(this.btns[BRAKE_LEVER], { duration: .6, rotation })
-			this.pauseLoop(loop)
-			gsap.to(brakeContainer, { duration: .6, x: x - 3, y: y + 3, ease: 'elastic.out' })
+			gsap.to(this.btns[BRAKE_LEVER], { duration: .6, rotation }) //刹车动效
+			this.pauseLoop(loop) //停止粒子滑动和样式、位置还原
+			gsap.to(brakeContainer, { duration: .6, x: x - 3, y: y + 10, ease: 'elastic.out' }) //刹车减震动效
+			gsap.to(actionContainer, { duration: .6, alpha: 0 })
 		})
 
 		actionContainer.on('mouseup', () => {
 			gsap.to(this.btns[BRAKE_LEVER], { duration: .6, rotation: 0 })
 			this.startLoop(loop)
 			gsap.to(brakeContainer, { duration: .6, x, y, ease: 'elastic.out' })
+			gsap.to(actionContainer, { duration: .6, alpha: 1 })
 		})
 	}
 
